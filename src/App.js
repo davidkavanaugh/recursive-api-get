@@ -7,7 +7,9 @@ const App = () => {
     pokemonArr = []
   ) => {
     if (!next) {
+      console.log(pokemonArr);
       setList(pokemonArr);
+      return;
     }
     fetch(next)
       .then((response) => {
