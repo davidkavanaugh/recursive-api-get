@@ -1,33 +1,41 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
 const App = () => {
   const [list, setList] = useState([]);
-  const fetchPokemon = (
-    next = "https://pokeapi.co/api/v2/pokemon/",
-    pokemonArr = []
-  ) => {
-    if (!next) {
-      console.log(pokemonArr);
-      setList([...list, ...pokemonArr]);
-      return;
-    }
-    fetch(next)
-      .then((response) => response.json())
-      .then((responseJSON) => {
-        const listArr = [...pokemonArr, ...responseJSON.results];
-        return [listArr, responseJSON.next];
-      })
-      .then(([newList, next]) => fetchPokemon(next, newList))
-      .catch((err) => console.log(err));
-  };
+  const [isVisible, setIsVisible] = useState(false);
+  useEffect(() => {
+    const fetchPokemon = (
+      next = "https://pokeapi.co/api/v2/pokemon/",
+      pokemonArr = []
+    ) => {
+      if (!next) {
+        console.log(pokemonArr);
+        setList([...list, ...pokemonArr]);
+        return;
+      }
+      axios
+        .get(next)
+        .then((response) => [
+          [...pokemonArr, ...response.data.results],
+          response.data.next,
+        ])
+        .then(([newList, next]) => fetchPokemon(next, newList))
+        .catch((err) => console.log(err));
+    };
+    fetchPokemon();
+  }, []);
+
   return (
     <>
-      <button onClick={() => fetchPokemon()}>Fetch Pokemon</button>
-      <ul>
-        {list.map((pokemon, idx) => {
-          return <li key={idx}>{pokemon.name}</li>;
-        })}
-      </ul>
+      <button onClick={() => setIsVisible(true)}>Fetch Pokemon</button>
+      {isVisible && (
+        <ul>
+          {list.map((pokemon, idx) => {
+            return <li key={idx}>{pokemon.name}</li>;
+          })}
+        </ul>
+      )}
     </>
   );
 };
