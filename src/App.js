@@ -8,7 +8,7 @@ const App = () => {
   ) => {
     if (!next) {
       console.log(pokemonArr);
-      setList(pokemonArr);
+      setList([...list, ...pokemonArr]);
       return;
     }
     fetch(next)
@@ -16,7 +16,7 @@ const App = () => {
         return response.json();
       })
       .then((responseJSON) => {
-        const listArr = pokemonArr.concat(responseJSON.results);
+        const listArr = [...pokemonArr, ...responseJSON.results];
         return [listArr, responseJSON.next];
       })
       .then(([newList, next]) => {
