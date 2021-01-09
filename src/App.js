@@ -12,16 +12,12 @@ const App = () => {
       return;
     }
     fetch(next)
-      .then((response) => {
-        return response.json();
-      })
+      .then((response) => response.json())
       .then((responseJSON) => {
         const listArr = [...pokemonArr, ...responseJSON.results];
         return [listArr, responseJSON.next];
       })
-      .then(([newList, next]) => {
-        fetchPokemon(next, newList);
-      })
+      .then(([newList, next]) => fetchPokemon(next, newList))
       .catch((err) => console.log(err));
   };
   return (
